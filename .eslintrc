@@ -1,0 +1,63 @@
+{
+  "root": true,
+  "env": {
+    "commonjs": true,
+    "es6": true,
+    "jest": true,
+    "browser": true
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 7,
+    "sourceType": "module"
+  },
+  "extends": [
+    "plugin:import/recommended",
+    "plugin:jest/recommended",
+    "airbnb",
+    "prettier/react",
+    "jest-enzyme"
+  ],
+  "plugins": [
+    "babel",
+    "jest",
+    "react",
+    "react-hooks",
+    "prettier"
+  ],
+  "rules": {
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
+    "import/no-unresolved": false,
+    "import/order": [
+      "error", {
+        "groups": [["index", "sibling", "parent", "internal", "external", "builtin"]],
+        "newlines-between": "never"
+      }
+    ],
+    "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/label-has-for": "off",
+    "jsx-a11y/no-autofocus": "off",
+
+    "react/destructuring-assignment": "off",
+    "react/forbid-prop-types": "off",
+    "react/jsx-curly-brace-presence": "off",
+    "react/jsx-filename-extension": ["error", { "extensions":  [".js", ".jsx", ".ts", ".tsx"]}],
+    "react/jsx-handler-names": [
+      "error",
+      {
+        "eventHandlerPrefix": "handle",
+        "eventHandlerPropPrefix": "on"
+      }
+    ],
+    "react/no-danger": "error",
+
+    "react/no-direct-mutation-state": "error",
+    "react/no-find-dom-node": "off",
+    "react/no-multi-comp": "off",
+    "react/require-default-props": "off",
+    "react/sort-prop-types": "error"
+  }
+}

@@ -1,16 +1,15 @@
 module.exports = {
   verbose: true,
+  timers: 'fake',
   transform: {
-    '^.+\\.jsx?$': 'babel-jest'
+    '^.+\\.[jt]sx?$': 'babel-jest',
   },
-  testPathIgnorePatterns: [
-    'build',
-    'node_modules'
-  ],
-  setupFilesAfterEnv: [
-    '<rootDir>/scripts/setupTest.js'
-  ],
-  collectCoverageFrom: [
-    'src/**/*.{js|ts}',
-  ]
-}
+  testPathIgnorePatterns: ['/build/', '/node_modules/'],
+  setupFilesAfterEnv: ['<rootDir>/scripts/setupTest.js'],
+  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx'],
+  globals: {
+    'ts-jest': {
+      tsConfig: './tsconfig.test.json',
+    },
+  },
+};

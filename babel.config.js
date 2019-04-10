@@ -1,22 +1,30 @@
 module.exports = {
   presets: [
     [
-      '@babel/env'
+      '@babel/env',
+      {
+        modules: 'commonjs',
+      },
     ],
     '@babel/react',
-    '@babel/typescript'
+    '@babel/typescript',
   ],
   plugins: [
     [
       '@babel/proposal-decorators',
       {
-        'legacy': true
-      }
+        legacy: true,
+      },
     ],
     '@babel/proposal-class-properties',
     '@babel/proposal-object-rest-spread',
     '@babel/transform-object-assign',
-    '@babel/transform-runtime'
+    '@babel/transform-runtime',
   ],
-  ignore: [/@babel[\\|/]runtime/]
-}
+  ignore: [/@babel[\\|/]runtime/],
+  env: {
+    production: {
+      plugins: ['transform-react-remove-prop-types', '@babel/transform-react-constant-elements'],
+    },
+  },
+};
