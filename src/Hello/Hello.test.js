@@ -49,3 +49,25 @@ it('should change text', () => {
   });
   expect(container.textContent).toBe('React');
 });
+
+
+it('shouldn\'t update after unmount', () => {
+  act(() => {
+    ReactDOM.render(
+      <Hello changeText="React" changeAfter={5e3} />,
+      container
+    );
+
+    ReactDOM.unmountComponentAtNode(container);
+  });
+
+  console._error = console.error;
+  console.error = jest.fn();
+  act(() => {
+    jest.advanceTimersByTime(5e3);
+  });
+
+  expect(console.error).not.toHaveBeenCalled();
+
+  console.error = console._error;
+});
