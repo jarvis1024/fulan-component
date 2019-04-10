@@ -1,0 +1,12 @@
+
+node_modules
+build
+*.log
+
+.DS_STORE
+.idea
+.vscode
+
+# 二选一
+# package-lock.json
+yarn.lock
