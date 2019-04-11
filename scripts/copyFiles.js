@@ -8,7 +8,7 @@ const buildPath = path.resolve(process.cwd(), BUILD_PATH);
 
 const copyPackageFile = () => {
   const packageFile = fs.readFileSync(path.resolve(packagePath, 'package.json'), 'utf8');
-  const { scripts, devDependencies, husky, ...packageData } = JSON.parse(packageFile);
+  const { scripts, devDependencies, 'lint-staged': lint, ...packageData } = JSON.parse(packageFile);
 
   // packageData.version = process.env.VERSION;
   fs.writeFileSync(

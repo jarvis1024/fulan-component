@@ -35,7 +35,4 @@ Hello.defaultProps = {
   children: 'Hello',
 };
 
-
-
-
 export default Hello;

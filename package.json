@@ -19,7 +19,8 @@
     "lint:fix": "eslint ./ --cache --fix",
     "typescript": "tslint -p tsconfig.json --test \"src/**/*.{ts,tsx}\"",
     "jest": "cross-env NODE_ENV=test jest --config jest.config.js --no-cache",
-    "pretty": "prettier --write **/*.{js,jsx,ts,tsx,json} !build/** !.{vscode,idea}/**"
+    "pretty": "prettier --write **/*.{js,jsx,ts,tsx,json} !build/** !.{vscode,idea}/**",
+    "precommit": "lint-staged && npm test"
   },
   "peerDependencies": {
     "react": "^16.8.0",
@@ -60,6 +61,7 @@
     "eslint-plugin-react-hooks": "^1.6.0",
     "husky": "^1.3.1",
     "jest": "^24.7.1",
+    "lint-staged": "^8.1.5",
     "prettier": "^1.16.4",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -74,9 +76,10 @@
   "publishConfig": {
     "access": "public"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm test && npm run pretty"
-    }
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json}": [
+      "npm run pretty",
+      "git add"
+    ]
   }
 }
