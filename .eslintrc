@@ -58,6 +58,8 @@
     "react/no-find-dom-node": "off",
     "react/no-multi-comp": "off",
     "react/require-default-props": "off",
-    "react/sort-prop-types": "error"
+    "react/sort-prop-types": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error"
   }
 }
