@@ -1,7 +1,6 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-
 export interface HelloProps {
   changeAfter: number;
   changeText?: ReactNode;
@@ -9,11 +8,11 @@ export interface HelloProps {
 }
 
 function Hello({ changeText, changeAfter, children }: HelloProps) {
-  const [text, setText] = useState(children || 'World');
+  const [text, setText] = useState(children);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setText(changeText || text);
+      setText(changeText);
     }, changeAfter);
 
     return () => {
@@ -32,6 +31,11 @@ Hello.propTypes = {
 
 Hello.defaultProps = {
   changeAfter: 5e3,
+  changeText: 'World',
+  children: 'Hello',
 };
+
+
+
 
 export default Hello;
