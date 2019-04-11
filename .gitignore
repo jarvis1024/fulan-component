@@ -6,6 +6,7 @@ build
 .DS_STORE
 .idea
 .vscode
+.eslintcache
 
 # 二选一
 # package-lock.json
