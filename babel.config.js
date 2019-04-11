@@ -10,12 +10,7 @@ module.exports = {
     '@babel/typescript',
   ],
   plugins: [
-    [
-      '@babel/proposal-decorators',
-      {
-        legacy: true,
-      },
-    ],
+    ['@babel/proposal-decorators', { legacy: true }],
     '@babel/proposal-class-properties',
     '@babel/proposal-object-rest-spread',
     '@babel/transform-object-assign',
@@ -24,7 +19,10 @@ module.exports = {
   ignore: [/@babel[\\|/]runtime/],
   env: {
     production: {
-      plugins: ['transform-react-remove-prop-types', '@babel/transform-react-constant-elements'],
+      plugins: [
+        ['transform-react-remove-prop-types', { mode: 'unsafe-wrap' }],
+        '@babel/transform-react-constant-elements',
+      ],
     },
   },
 };
