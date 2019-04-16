@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "esnext",
+    "target": "es5",
     "declaration": true,
     "outDir": "build",
     "sourceMap": true,
-    "lib": ["dom", "es7"],
+    "allowJs": true,
+    "lib": ["dom", "esnext"],
     "jsx": "react",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
@@ -14,5 +15,6 @@
     "experimentalDecorators": true,
     "noErrorTruncation": true
   },
+  "types": ["jest"],
   "include": ["src"]
 }
