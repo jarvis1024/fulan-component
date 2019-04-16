@@ -6,16 +6,14 @@ import { mount } from 'enzyme';
 
 jest.useFakeTimers();
 
-let container;
+const container = document.createElement('div');
 
 beforeEach(() => {
-  container = document.createElement('div');
   document.body.appendChild(container);
 });
 
 afterEach(() => {
   document.body.removeChild(container);
-  container = null;
 });
 
 it('should render default text', () => {

@@ -25,8 +25,8 @@ function Hello({ changeText, changeAfter, children }: HelloProps) {
 
 Hello.propTypes = {
   changeAfter: PropTypes.number,
-  changeText: PropTypes.string,
-  children: PropTypes.oneOfType([PropTypes.string, PropTypes.elementType]),
+  changeText: PropTypes.node,
+  children: PropTypes.node,
 };
 
 Hello.defaultProps = {
