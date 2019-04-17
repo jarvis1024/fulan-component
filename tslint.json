@@ -3,8 +3,9 @@
   "extends": ["dtslint/dtslint.json"],
   "jsRules": {},
   "rules": {
+    "indent": [true, "spaces", 2],
     "deprecation": true,
-    "file-name-casing": false,
+    "file-name-casing": [true, { ".ts": "camel-case", ".tsx": "pascal-case" }],
     "no-null-undefined-union": false,
     "no-unnecessary-callback-wrapper": false,
     "no-unnecessary-generics": false,

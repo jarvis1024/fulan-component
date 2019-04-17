@@ -56,4 +56,5 @@ it("shouldn't update after unmount", () => {
   });
 
   expect(spy).not.toHaveBeenCalled();
+  spy.mockRestore();
 });

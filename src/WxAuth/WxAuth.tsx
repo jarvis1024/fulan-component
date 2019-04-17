@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+/* eslint-disable camelcase,@typescript-eslint/camelcase */
+import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import qs, { ParsedUrlQueryInput } from 'querystring';
 import URL from 'url';
@@ -9,19 +10,19 @@ export enum AuthScope {
   UserInfo = 'snsapi_userinfo',
 }
 
-type Code = string | null;
+type Code = string;
 
-type WxAuthCache = {
+interface WxAuthCache {
   get(): Code;
   set(code: Code): void;
-};
+}
 
 const defaultCache: WxAuthCache = {
   get() {
     return sessionStorage.getItem('WX_AUTH_CODE') as Code;
   },
   set(code: Code) {
-    sessionStorage.setItem('WX_AUTH_CODE', code as string);
+    sessionStorage.setItem('WX_AUTH_CODE', code);
   },
 };
 
@@ -29,7 +30,7 @@ const defaultPrepare = (): string => {
   return window.location.hash;
 };
 
-const defaultSuccess = ({ state }: CallbackParams) => {
+const defaultCallback = ({ state }: CallbackParams): void => {
   if (state && state.indexOf('#') === 0) {
     window.location.hash = state;
   }
@@ -42,18 +43,21 @@ interface RedirectParams extends ParsedUrlQueryInput {
   state?: string;
 }
 
-interface CallbackParams extends ParsedUrlQueryInput {
+interface CallbackParams {
   code: Code;
   state: string | null;
 }
 
+type WxAuthFuncChildren = (state: WxAuthState) => React.ReactNode;
+
 export interface WxAuthProps {
   appid: string;
-  redirectUrl: string;
+  redirectUrl?: string;
   scope: AuthScope;
   cache: WxAuthCache;
-  onPrepare: () => Code | Promise<Code> | void;
-  onSuccess: (obj: CallbackParams) => Promise<void> | void;
+  children: WxAuthFuncChildren | React.ReactNode;
+  onPrepare(): Promise<string | void> | string | void;
+  callback(obj: CallbackParams): Promise<void> | void;
 }
 
 interface WxAuthState {
@@ -62,82 +66,71 @@ interface WxAuthState {
   done: boolean;
 }
 
-class WxAuth extends Component<WxAuthProps, WxAuthState> {
-  static propTypes = {
+class WxAuth extends React.Component<WxAuthProps, WxAuthState> {
+  public static propTypes = {
     appid: PropTypes.string.isRequired,
-    redirectUrl: PropTypes.string.isRequired,
-    scope: PropTypes.string,
     cache: PropTypes.shape({ get: PropTypes.func, set: PropTypes.func }),
+    callback: PropTypes.func,
+    children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     onPrepare: PropTypes.func,
-    onSuccess: PropTypes.func,
+    redirectUrl: PropTypes.string,
+    scope: PropTypes.oneOf([AuthScope.Base, AuthScope.UserInfo]),
   };
 
-  static defaultProps = {
+  public static defaultProps = {
     scope: AuthScope.Base,
     cache: defaultCache,
-    onPrepare: defaultPrepare,
-    onSuccess: defaultSuccess,
+    onPrepare: () => {},
+    callback: defaultCallback,
   };
 
-  static getDerivedStateFromProps(nextProps: WxAuthProps, state: WxAuthState) {
-    if (!state.code) {
-      const cacheCode = nextProps.cache.get();
-      if (cacheCode) {
-        return { code: cacheCode };
-      }
+  public constructor(props: WxAuthProps) {
+    super(props);
+    const cacheCode = props.cache.get();
+    const cbParams = qs.parse(window.location.search.substr(1));
 
-      if (window.location.search) {
-        const cbParams = qs.parse(window.location.search.substr(1));
-
-        if (cbParams.code) {
-          return { code: cbParams.code, state: cbParams.state };
-        }
-      }
-    }
-
-    return null;
+    this.state = {
+      code: cacheCode || Array.isArray(cbParams.code) ? cbParams.code[0] : cbParams.code || null,
+      state: Array.isArray(cbParams.state) ? cbParams.state[0] : cbParams.state || null,
+      done: false,
+    };
   }
 
-  state = {
-    code: null,
-    state: null,
-    done: false,
-  };
-
-  async componentDidMount() {
+  public async componentDidMount() {
     if (!isWeChatClient()) return;
 
     const { state, code, done } = this.state;
-    const { appid, redirectUrl, scope, onPrepare, onSuccess } = this.props;
+    const { appid, redirectUrl, scope, onPrepare, callback } = this.props;
 
-    const propUrl = URL.parse(redirectUrl);
+    const propUrl = URL.parse(redirectUrl || window.location.href.split('#')[0]);
     propUrl.hash = undefined;
     propUrl.search = undefined;
 
     const { hostname, pathname } = URL.parse(window.location.href);
-    const isRedirectUrl = hostname === propUrl.host && pathname == propUrl.pathname;
+    const isRedirectUrl = hostname === propUrl.host && pathname === propUrl.pathname;
 
     if (!code) {
-      const redirect_uri = URL.format(propUrl);
       const redirectParams: RedirectParams = {
         appid,
         scope,
-        redirect_uri,
+        redirect_uri: URL.format(propUrl),
       };
 
       let redirectState = onPrepare();
       if (redirectState instanceof Promise) {
         redirectState = await redirectState;
       }
+      redirectState = redirectState || defaultPrepare();
       if (typeof redirectState === 'string') {
         redirectParams.state = redirectState;
       }
 
-      window.location.href = `https://https://open.weixin.qq.com/connect/oauth2/authorize?${qs.stringify(
-        redirectParams,
-      )}`;
+      const query = qs.stringify(redirectParams);
+      window.location.assign(
+        `https://https://open.weixin.qq.com/connect/oauth2/authorize?${query}`,
+      );
     } else if (isRedirectUrl && !done) {
-      const success = onSuccess({ state, code });
+      const success = callback({ state, code });
       if (success instanceof Promise) {
         await success;
       }
@@ -152,7 +145,9 @@ class WxAuth extends Component<WxAuthProps, WxAuthState> {
 
     if (!code || !done) return null;
 
-    return typeof children === 'function' ? children({ state, code }) : children;
+    return typeof children === 'function'
+      ? (children as WxAuthFuncChildren)({ state, code, done })
+      : children;
   }
 }
 
