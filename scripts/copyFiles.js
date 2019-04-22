@@ -1,10 +1,12 @@
 /* eslint-disable no-console */
 const fs = require('fs');
+const glob = require('glob');
 const path = require('path');
 
 const packagePath = process.cwd();
 const { BUILD_PATH = 'build' } = process.env;
-const buildPath = path.resolve(process.cwd(), BUILD_PATH);
+const sourcePath = path.join(packagePath, 'src');
+const buildPath = path.join(packagePath, BUILD_PATH);
 
 const copyPackageFile = () => {
   const packageFile = fs.readFileSync(path.resolve(packagePath, 'package.json'), 'utf8');
@@ -16,6 +18,11 @@ const copyPackageFile = () => {
     JSON.stringify(packageData, null, 2),
     'utf8',
   );
+
+  const styles = glob.sync('**/*.{less,css}', { cwd: sourcePath }) || [];
+  styles.forEach(filename => {
+    fs.copyFileSync(path.resolve(sourcePath, filename), path.resolve(buildPath, filename));
+  });
 };
 
 const run = async () => {
