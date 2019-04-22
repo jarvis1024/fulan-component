@@ -11,10 +11,11 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development jest --config jest.config.js --watchAll",
     "test": "npm run lint && npm run jest",
-    "build": "npm run build:types && npm run build:js && npm run build:copy-files",
+    "build": "npm run build:clean && npm run build:types && npm run build:js && npm run build:copy-files",
+    "build:clean": "rimraf ./build/*",
     "build:copy-files": "node ./scripts/copyFiles.js",
     "build:types": "cross-env NODE_ENV=prodcution tsc --emitDeclarationOnly",
-    "build:js": "cross-env NODE_ENV=production babel ./src --out-dir ./build --ignore \"**/*.test.{js,jsx,ts,tsx}\"  --extensions \".ts,.tsx,.js,.jsx\"",
+    "build:js": "cross-env NODE_ENV=production babel ./src --out-dir ./build --ignore \"**/__tests__/*,**/*.test.js,**/*.test.jsx,**/*.test.ts,**/*.test.tsx\"  --extensions \".ts,.tsx,.js,.jsx\"",
     "lint": "eslint ./ --cache --report-unused-disable-directives",
     "lint:fix": "eslint ./ --cache --fix",
     "jest": "cross-env NODE_ENV=test jest --config jest.config.js --no-cache",
@@ -71,6 +72,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-test-renderer": "^16.8.6",
+    "rimraf": "^2.6.3",
     "tslint": "^5.15.0",
     "typescript": "^3.4.3"
   },
